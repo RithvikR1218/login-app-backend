@@ -11,7 +11,8 @@ mod models {
 pub mod schema;
 //By keeping all these files in main, [Intellisense/Rust sees them]
 
-use actix_web::{web, error,App,middleware, HttpResponse, HttpServer, Responder};
+use actix_web::{web,error,App,middleware, HttpResponse, HttpServer, Responder};
+use actix_cors::Cors;
 
 //For logging
 use env_logger::Env;
@@ -51,8 +52,11 @@ async fn main() -> std::io::Result<()> {
                     .into()
             });
 
+            let cors = Cors::permissive();
+
         App::new()
             .wrap(middleware::Logger::default())
+            .wrap(cors)
             .app_data(json_config)
             .app_data(web::Data::new(pool.clone()))
             .service(create_new_user)
