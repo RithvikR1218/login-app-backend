@@ -16,19 +16,19 @@ use actix_cors::Cors;
 
 //For logging
 use env_logger::Env;
+//for routes
 use crate::services::endpoints::{
     create_new_user,get_all_present_user,
     get_some_user,update_particular_user,
-    delete_particular_user,login_user};
-// use crate::services::endpoints::get_user;
+    delete_particular_user,login_user,create_new_show};
+//For db pool
 use crate::services::db::get_connection_pool;
 
 async fn index() -> impl Responder {
     HttpResponse::Ok().body("Hello, Actix Web!")
 }
 
-
-//Making a conneciton pool
+//Making a connection pool
 use diesel::r2d2::{self, ConnectionManager};
 use diesel::PgConnection;
 
@@ -52,19 +52,21 @@ async fn main() -> std::io::Result<()> {
                     .into()
             });
 
-            let cors = Cors::permissive();
-
+        let cors = Cors::permissive();
+        let user_controller  = actix_web::web::scope("/user") 
+                                        .service(create_new_user)
+                                        .service(get_all_present_user)
+                                        .service(get_some_user)
+                                        .service(update_particular_user)
+                                        .service(delete_particular_user)
+                                        .service(login_user);
         App::new()
             .wrap(middleware::Logger::default())
             .wrap(cors)
             .app_data(json_config)
             .app_data(web::Data::new(pool.clone()))
-            .service(create_new_user)
-            .service(get_all_present_user)
-            .service(get_some_user)
-            .service(update_particular_user)
-            .service(delete_particular_user)
-            .service(login_user)
+            .service(user_controller)
+            .service(create_new_show)
             .route("/", web::get().to(index))
     })
     .bind("127.0.0.1:8080")?

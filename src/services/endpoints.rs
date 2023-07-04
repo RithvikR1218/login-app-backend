@@ -1,31 +1,42 @@
 use actix_web::{Responder,web,Error,post,get,put, HttpResponse, delete};
-use crate::models::models::{CreateUser,UpdateUser, Login};
+use crate::models::models::{CreateUser,UpdateUser, Login, CreateShow};
 use crate::DbPool;
-use crate::services::db::{create_user,get_all_users,get_users,update_user,delete_user,check_login};
+use crate::services::db::{create_user,get_all_users,get_users,update_user,delete_user,check_login,create_show};
 
-#[post("/createUser")]
-pub async fn create_new_user(pool: web::Data<DbPool>,mut info : web::Json<CreateUser>) -> Result<impl Responder, Error>{
+#[post("/create")]
+pub async fn create_new_user(pool: web::Data<DbPool>,info : web::Json<CreateUser>) -> Result<impl Responder, Error>{
     let new_user = web::block(move || {
         let conn = &mut pool.get().unwrap();
-        create_user(conn,&mut info)
+        create_user(conn,&info)
       })
       .await?
       .map_err(actix_web::error::ErrorInternalServerError)?;
     Ok(web::Json(new_user))
 }
 
-#[post("/loginUser")]
+#[post("/tv_show/create")]
+pub async fn create_new_show(pool: web::Data<DbPool>,info : web::Json<CreateShow>) -> Result<impl Responder, Error>{
+    let new_show = web::block(move || {
+        let conn = &mut pool.get().unwrap();
+        create_show(conn,&info)
+      })
+      .await?
+      .map_err(actix_web::error::ErrorInternalServerError)?;
+    Ok(web::Json(new_show))
+}
+
+#[post("/login")]
 pub async fn login_user(pool: web::Data<DbPool>, credentials : web::Json<Login>) -> Result<impl Responder, Error>{
       let login_message = web::block(move || {
         let conn = &mut pool.get().unwrap();
-        check_login(conn,&mut credentials.into_inner())
+        check_login(conn,&credentials.into_inner())
       })
       .await?
       .map_err(actix_web::error::ErrorInternalServerError)?;
     Ok(web::Json(login_message))
 }
 
-#[get("/getUser")]
+#[get("/show")]
 pub async fn get_all_present_user(pool: web::Data<DbPool>) -> Result<impl Responder, Error>{
       let found_users = web::block(move || {
         let conn = &mut pool.get().unwrap();
@@ -36,7 +47,7 @@ pub async fn get_all_present_user(pool: web::Data<DbPool>) -> Result<impl Respon
     Ok(HttpResponse::Ok().json(found_users))
 }
 
-#[get("/getUser/{email}")]
+#[get("/show/{email}")]
 pub async fn get_some_user(email: web:: Path <String>,pool: web::Data<DbPool>) -> Result<impl Responder, Error>{
       let details = email.into_inner();
       let found_user = web::block(move || {
@@ -48,7 +59,7 @@ pub async fn get_some_user(email: web:: Path <String>,pool: web::Data<DbPool>) -
     Ok(web::Json(found_user))
 }
 
-#[put("/updateUser/{email}")]
+#[put("/update/{email}")]
 pub async fn update_particular_user(email: web:: Path <String>,info : web::Query<UpdateUser>,pool: web::Data<DbPool>) -> Result<impl Responder, Error>{
   let details = email.into_inner();
 
@@ -61,7 +72,7 @@ pub async fn update_particular_user(email: web:: Path <String>,info : web::Query
     Ok(HttpResponse::Ok().json(updated_user))
 }
 
-#[delete("/deleteUser/{email}")]
+#[delete("/delete/{email}")]
 pub async fn delete_particular_user(email: web:: Path <String>,pool: web::Data<DbPool>) -> Result<HttpResponse, Error>{
   let details = email.into_inner();
       let results = web::block(move || {

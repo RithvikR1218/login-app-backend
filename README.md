@@ -19,3 +19,11 @@ Start Server:<br />
 - cargo run
 
 Any problems with setting up server refer to official diesel documents
+
+Work to be done:
+- Have proper error handling on the actix side
+- Make JSON for error messages
+- Keep rating and time_left in user_videos
+- Use route scoping to modulize the routes in app
+- modulize the endpoints and db functions
+- Make some basic queries and mutations for videos and rating and start work on the web_transport

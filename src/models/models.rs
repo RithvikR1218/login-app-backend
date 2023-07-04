@@ -3,7 +3,7 @@ use serde::{Deserialize,Serialize};
 use crate::schema::{users,tv_shows, seasons,episodes,user_videos};
 
 #[derive(Queryable, Serialize, Selectable)]
-#[diesel(table_name = crate::schema::users)]
+#[diesel(table_name = users)]
 #[diesel(check_for_backend(diesel::pg::Pg))]
 #[derive(Clone)]
 pub struct User {
@@ -45,7 +45,7 @@ pub struct Response {
     pub message: String
 }
 
-#[derive(Queryable, Identifiable, Associations)]
+#[derive(Queryable, Identifiable, Associations,Serialize)]
 #[diesel(belongs_to(User, foreign_key = users_id))]
 #[diesel(belongs_to(TvShows))]
 #[diesel(table_name = user_videos)]
@@ -55,17 +55,34 @@ struct UsersVideos {
     tv_shows_id: i32,
 }
 
-#[derive(Queryable, Identifiable, Selectable, Debug, PartialEq)]
+#[derive(Queryable, Identifiable, Selectable, Debug, PartialEq,Serialize)]
 #[diesel(table_name = tv_shows)]
 pub struct TvShows {
     pub id: i32,
     pub title: String,
     pub director: String,
-    pub rating: f32,
+    pub rating: f64,
     pub summary: String
 }
 
-#[derive(Queryable, Selectable, Identifiable, Associations, Debug, PartialEq)]
+#[derive(Insertable)]
+#[diesel(table_name = tv_shows)]
+pub struct NewShow<'a> {
+    pub title: &'a str,
+    pub director: &'a str,
+    pub rating: &'a f64,
+    pub summary: &'a str,
+}
+
+#[derive(Deserialize)]
+pub struct CreateShow {
+    pub title: String,
+    pub director: String,
+    pub rating: f64,
+    pub summary: String
+}
+
+#[derive(Queryable, Selectable, Identifiable, Associations, Debug, PartialEq,Serialize)]
 #[diesel(belongs_to(TvShows))]
 #[diesel(table_name = seasons)]
 pub struct Seasons {
@@ -75,7 +92,7 @@ pub struct Seasons {
     pub tv_shows_id: i32
 }
 
-#[derive(Queryable, Selectable, Identifiable, Associations, Debug, PartialEq)]
+#[derive(Queryable, Selectable, Identifiable, Associations, Debug, PartialEq,Serialize)]
 #[diesel(belongs_to(Seasons))]
 #[diesel(table_name = episodes)]
 pub struct Episodes {
