@@ -4,27 +4,39 @@ mod services {
     pub mod db {
         pub mod connection {pub mod db_connection;}
         pub mod user {pub mod functions;}
-        pub mod videos {pub mod tv_shows {pub mod function;}}
+        pub mod videos {
+            pub mod tv_shows {
+                pub mod functions;
+                pub mod episodes {pub mod functions;}
+                pub mod seasons {pub mod functions;}
+            }
+        }
     } 
     pub mod api {
-            pub mod user {pub mod endpoints;}
-            pub mod videos {pub mod tv_shows {pub mod endpoints;}}
+        pub mod user {pub mod endpoints;}
+        pub mod videos {
+            pub mod tv_shows {
+                pub mod endpoints;
+                pub mod seasons {
+                    pub mod endpoints;
+                }
+            }
+        }
+    }
+    pub mod routes {
+        pub mod routes;
     }
 }
 mod models {pub mod models;}
 //Using root level file
 pub mod schema;
-pub mod routes;
 //By keeping all these files in main, [Intellisense/Rust sees them]
 
 use actix_web::{web,error,App,middleware, HttpResponse, HttpServer, Responder};
 use actix_cors::Cors;
-
-//For logging
+//logging
 use env_logger::Env;
-//for routes
-use crate::routes::{user_controller,tv_show_controller};
-//For db pool
+use crate::services::routes::routes::{user_controller,tv_show_controller};
 use crate::services::db::connection::db_connection::get_connection_pool;
 
 async fn index() -> impl Responder {
@@ -45,9 +57,9 @@ async fn main() -> std::io::Result<()> {
     let pool = get_connection_pool();
     println!("Connection to DB Established !\n");
 
+    //To start logging
     env_logger::init_from_env(Env::default().default_filter_or("info"));
     HttpServer::new(move || {
-
         let json_config = web::JsonConfig::default()
             .limit(4096)
             .error_handler(|err, _req| {
@@ -55,9 +67,7 @@ async fn main() -> std::io::Result<()> {
                 error::InternalError::from_response(err, HttpResponse::Conflict().finish())
                     .into()
             });
-
         let cors = Cors::permissive();
-        
         App::new()
             .wrap(middleware::Logger::default())
             .wrap(cors)
