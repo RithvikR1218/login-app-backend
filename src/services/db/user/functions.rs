@@ -1,20 +1,7 @@
 use diesel::{pg::PgConnection};
 use diesel::prelude::*;
-use diesel::r2d2::ConnectionManager;
-use diesel::r2d2::Pool;
 use crate::DbError;
-use crate::models::models::{NewUser,User, CreateUser, UpdateUser,Login,Response, CreateShow,NewShow, TvShows};
-use dotenvy::dotenv;
-
-pub fn get_connection_pool() -> Pool<ConnectionManager<PgConnection>> {
-    dotenv().ok();
-    let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL");
-    let manager = ConnectionManager::<PgConnection>::new(database_url);
-        let pool = Pool::builder()
-        .build(manager)
-        .expect("Failed to create pool.");
-    return pool;
-}
+use crate::models::models::{NewUser,User, CreateUser, UpdateUser,Login,Response};
 
 pub fn create_user(conn: &mut PgConnection, info: &CreateUser) -> Result<User,DbError> {
     use crate::schema::users;
@@ -26,21 +13,6 @@ pub fn create_user(conn: &mut PgConnection, info: &CreateUser) -> Result<User,Db
     let create = diesel::insert_into(users::table)
         .values(&new_user)
         .returning(User::as_returning())
-        .get_result(conn)?;
-    Ok(create)
-}
-
-pub fn create_show(conn: &mut PgConnection, info: &CreateShow) -> Result<TvShows,DbError> {
-    use crate::schema::tv_shows;
-    let new_show = NewShow { 
-        title: &info.title,
-        director: & info.director,
-        rating: &info.rating,
-        summary: &info.summary
-    };
-    let create = diesel::insert_into(tv_shows::table)
-        .values(&new_show)
-        .returning(TvShows::as_returning())
         .get_result(conn)?;
     Ok(create)
 }

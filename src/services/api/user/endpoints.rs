@@ -1,7 +1,7 @@
 use actix_web::{Responder,web,Error,post,get,put, HttpResponse, delete};
-use crate::models::models::{CreateUser,UpdateUser, Login, CreateShow};
+use crate::models::models::{CreateUser,UpdateUser, Login};
 use crate::DbPool;
-use crate::services::db::{create_user,get_all_users,get_users,update_user,delete_user,check_login,create_show};
+use crate::services::db::user::functions::{create_user,get_all_users,get_users,update_user,delete_user,check_login};
 
 #[post("/create")]
 pub async fn create_new_user(pool: web::Data<DbPool>,info : web::Json<CreateUser>) -> Result<impl Responder, Error>{
@@ -12,17 +12,6 @@ pub async fn create_new_user(pool: web::Data<DbPool>,info : web::Json<CreateUser
       .await?
       .map_err(actix_web::error::ErrorInternalServerError)?;
     Ok(web::Json(new_user))
-}
-
-#[post("/tv_show/create")]
-pub async fn create_new_show(pool: web::Data<DbPool>,info : web::Json<CreateShow>) -> Result<impl Responder, Error>{
-    let new_show = web::block(move || {
-        let conn = &mut pool.get().unwrap();
-        create_show(conn,&info)
-      })
-      .await?
-      .map_err(actix_web::error::ErrorInternalServerError)?;
-    Ok(web::Json(new_show))
 }
 
 #[post("/login")]
