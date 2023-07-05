@@ -1,24 +1,33 @@
-//To actually use them
+//Module tree to let rust see all the modules
 mod services { 
-    //Adding pub makes it public and we can use the functions in the file
     pub mod db {
         pub mod connection {pub mod db_connection;}
-        pub mod user {pub mod functions;}
-        pub mod videos {
-            pub mod tv_shows {
-                pub mod functions;
-                pub mod episodes {pub mod functions;}
-                pub mod seasons {pub mod functions;}
+        pub mod models {
+            pub mod old_models;
+            pub mod user {
+                pub mod models;
+            }
+            pub mod videos {
+                pub mod tv_shows {
+                    pub mod models;
+                    pub mod seasons {
+                        pub mod models;
+                    }
+                }
             }
         }
     } 
     pub mod api {
-        pub mod user {pub mod endpoints;}
+        pub mod user {
+            pub mod endpoints;
+            pub mod functions;}
         pub mod videos {
             pub mod tv_shows {
                 pub mod endpoints;
+                pub mod functions;
                 pub mod seasons {
                     pub mod endpoints;
+                    pub mod functions;
                 }
             }
         }
@@ -27,21 +36,15 @@ mod services {
         pub mod routes;
     }
 }
-mod models {pub mod models;}
-//Using root level file
 pub mod schema;
-//By keeping all these files in main, [Intellisense/Rust sees them]
 
-use actix_web::{web,error,App,middleware, HttpResponse, HttpServer, Responder};
+use actix_web::{web,error,App,middleware, HttpResponse, HttpServer};
 use actix_cors::Cors;
+
 //logging
 use env_logger::Env;
 use crate::services::routes::routes::{user_controller,tv_show_controller};
 use crate::services::db::connection::db_connection::get_connection_pool;
-
-async fn index() -> impl Responder {
-    HttpResponse::Ok().body("Hello, Actix Web!")
-}
 
 //Making a connection pool
 use diesel::r2d2::{self, ConnectionManager};
@@ -59,6 +62,8 @@ async fn main() -> std::io::Result<()> {
 
     //To start logging
     env_logger::init_from_env(Env::default().default_filter_or("info"));
+
+    //Customizing json data
     HttpServer::new(move || {
         let json_config = web::JsonConfig::default()
             .limit(4096)
@@ -72,10 +77,11 @@ async fn main() -> std::io::Result<()> {
             .wrap(middleware::Logger::default())
             .wrap(cors)
             .app_data(json_config)
+            //Sending connection pool as a state around the api
             .app_data(web::Data::new(pool.clone()))
+            //Controllers being used by server
             .service(user_controller())
             .service(tv_show_controller())
-            .route("/", web::get().to(index))
     })
     .bind("127.0.0.1:8080")?
     .run()

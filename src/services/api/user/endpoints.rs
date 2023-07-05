@@ -1,7 +1,7 @@
 use actix_web::{Responder,web,Error,post,get,put, HttpResponse, delete};
-use crate::models::models::{CreateUser,UpdateUser, Login};
+use crate::services::db::models::user::models::{CreateUser,UpdateUser, Login};
 use crate::DbPool;
-use crate::services::db::user::functions::{create_user,get_all_users,get_users,update_user,delete_user,check_login};
+use crate::services::api::user::functions::{create_user,get_all_users,get_users,update_user,delete_user,check_login};
 
 #[post("/create")]
 pub async fn create_new_user(pool: web::Data<DbPool>,info : web::Json<CreateUser>) -> Result<impl Responder, Error>{

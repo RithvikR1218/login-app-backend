@@ -1,8 +1,8 @@
 use diesel::{pg::PgConnection};
 use diesel::prelude::*;
 use crate::DbError;
-use crate::models::models::{CreateSeason,NewSeason, Seasons};
-use crate::services::db::videos::tv_shows::functions::get_shows;
+use crate::services::db::models::videos::tv_shows::seasons::models::{CreateSeason,NewSeason, Seasons};
+use crate::services::api::videos::tv_shows::functions::get_shows;
 
 pub fn create_season(conn: &mut PgConnection, info: &CreateSeason, show_name: &str) -> Result<Seasons,DbError> {
     use crate::schema::seasons;

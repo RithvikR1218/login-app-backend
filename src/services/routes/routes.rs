@@ -28,6 +28,7 @@ pub fn tv_show_controller() -> actix_web::Scope{
                             .service(get_all_present_shows)
                             .service(get_some_show)
                             .service(delete_particular_show)
+                            //season controller
                             .service(
                                 actix_web::web::scope("/{name}/season")
                                                         .service(create_new_season)

@@ -1,7 +1,7 @@
 use diesel::{pg::PgConnection};
 use diesel::prelude::*;
 use crate::DbError;
-use crate::models::models::{CreateShow,NewShow, TvShows,Response};
+use crate::services::db::models::videos::tv_shows::models::{CreateShow,NewShow, TvShows,Response};
 
 pub fn create_show(conn: &mut PgConnection, info: &CreateShow) -> Result<TvShows,DbError> {
     use crate::schema::tv_shows;

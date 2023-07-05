@@ -1,7 +1,7 @@
 use diesel::{pg::PgConnection};
 use diesel::prelude::*;
 use crate::DbError;
-use crate::models::models::{NewUser,User, CreateUser, UpdateUser,Login,Response};
+use crate::services::db::models::user::models::{NewUser,User, CreateUser, UpdateUser,Login,Response};
 
 pub fn create_user(conn: &mut PgConnection, info: &CreateUser) -> Result<User,DbError> {
     use crate::schema::users;
