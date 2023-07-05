@@ -1,7 +1,8 @@
 use actix_web::{Responder,HttpResponse,web,Error,post,get};
 use crate::models::models::{ CreateSeason};
 use crate::DbPool;
-use crate::services::db::videos::tv_shows::seasons::functions::{create_season};
+use crate::services::db::videos::tv_shows::seasons::functions::{
+    create_season, get_all_seasons,get_seasons};
 
 #[post("/create")]
 pub async fn create_new_season(show_name: web:: Path <String>,pool: web::Data<DbPool>,info : web::Json<CreateSeason>) -> Result<impl Responder, Error>{
@@ -14,33 +15,28 @@ pub async fn create_new_season(show_name: web:: Path <String>,pool: web::Data<Db
     Ok(web::Json(new_season))
 }
 
-#[get("/test")]
-pub async fn test() -> impl Responder{
-        HttpResponse::Ok().body("Hello, Actix Web!")
+#[get("/show")]
+pub async fn get_all_present_seasons(show_name: web:: Path <String>,pool: web::Data<DbPool>) -> Result<impl Responder, Error>{
+      let found_seasons = web::block(move || {
+        let conn = &mut pool.get().unwrap();
+        get_all_seasons(conn,&show_name.into_inner())
+      })
+      .await?
+      .map_err(actix_web::error::ErrorInternalServerError)?;
+    Ok(HttpResponse::Ok().json(found_seasons))
 }
 
-// #[get("/show")]
-// pub async fn get_all_present_shows(pool: web::Data<DbPool>) -> Result<impl Responder, Error>{
-//       let found_shows = web::block(move || {
-//         let conn = &mut pool.get().unwrap();
-//         get_all_shows(conn)
-//       })
-//       .await?
-//       .map_err(actix_web::error::ErrorInternalServerError)?;
-//     Ok(HttpResponse::Ok().json(found_shows))
-// }
-
-// #[get("/show/{name}")]
-// pub async fn get_some_show(name: web:: Path <String>,pool: web::Data<DbPool>) -> Result<impl Responder, Error>{
-//       let details = name.into_inner();
-//       let found_show = web::block(move || {
-//         let conn = &mut pool.get().unwrap();
-//         get_shows(conn,&details)
-//       })
-//       .await?
-//       .map_err(actix_web::error::ErrorInternalServerError)?;
-//     Ok(web::Json(found_show))
-// }
+#[get("/show/{number}")]
+pub async fn get_some_seasons(details: web:: Path <(String,i32)>,pool: web::Data<DbPool>) -> Result<impl Responder, Error>{
+      let (show_name,season_number) = details.into_inner();
+      let found_seasons = web::block(move || {
+        let conn = &mut pool.get().unwrap();
+        get_seasons(conn,&show_name,&season_number)
+      })
+      .await?
+      .map_err(actix_web::error::ErrorInternalServerError)?;
+    Ok(web::Json(found_seasons))
+}
 
 // #[delete("/delete/{name}")]
 // pub async fn delete_particular_show(name: web:: Path <String>,pool: web::Data<DbPool>) -> Result<HttpResponse, Error>{

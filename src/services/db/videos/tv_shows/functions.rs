@@ -31,7 +31,7 @@ pub fn get_shows(conn: &mut PgConnection,name: &str) -> Result<TvShows,DbError> 
     match show_result {
         Ok(user) => Ok(user),
         Err(diesel::result::Error::NotFound) => {
-            let error_message = format!("No users found with email: {}", name);
+            let error_message = format!("No shows found with name: {}", name);
             // let custom_error = Response { message: error_message };
             let test: DbError = String::from(error_message).into();
             Err(test)

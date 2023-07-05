@@ -1,4 +1,4 @@
-//Use part gives the file path for the functions
+//Use gives the file path for the functions
 use crate::services::api::user::endpoints::{
     //The functions being used with endpoints
     create_new_user,get_all_present_user,
@@ -10,7 +10,7 @@ use crate::services::api::videos::tv_shows::endpoints::{
     delete_particular_show};
 
 use crate::services::api::videos::tv_shows::seasons::endpoints::{
-    create_new_season,test};
+    create_new_season,get_all_present_seasons,get_some_seasons};
 
 pub fn user_controller() -> actix_web::Scope{
     return actix_web::web::scope("/user") 
@@ -31,6 +31,7 @@ pub fn tv_show_controller() -> actix_web::Scope{
                             .service(
                                 actix_web::web::scope("/{name}/season")
                                                         .service(create_new_season)
-                                                        .service(test)
+                                                        .service(get_all_present_seasons)
+                                                        .service(get_some_seasons)
                             );
 }

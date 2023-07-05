@@ -20,11 +20,43 @@ pub fn create_season(conn: &mut PgConnection, info: &CreateSeason, show_name: &s
     Ok(create)
 }
 
-// pub fn get_all_shows(conn: &mut PgConnection) -> Result<Vec<TvShows>,DbError> {
-//     use crate::schema::tv_shows::dsl::*;
-//     let shows = tv_shows.load::<TvShows>(conn)?;
-//     Ok(shows)
-// }
+pub fn get_all_seasons(conn: &mut PgConnection,show_name: &str) -> Result<Vec<Seasons>,DbError> {
+    use crate::schema::seasons::dsl::*;
+
+    let show = get_shows(conn,show_name)?;
+    let all_seasons = seasons.filter(tv_shows_id.eq(show.id)).load::<Seasons>(conn);
+    match all_seasons {
+                Ok(found_seasons) => {
+                    if found_seasons.is_empty() {
+                        let error_message = format!("No seasons found");
+                        let test: DbError = String::from(error_message).into();
+                        Err(test)
+                    } else {
+                        Ok(found_seasons)
+                    }
+                },
+                Err(err) => Err(Box::new(err)),
+            }
+}
+
+pub fn get_seasons(conn: &mut PgConnection,show_name: &str,number: &i32) -> Result<Seasons,DbError> {
+    use crate::schema::seasons::dsl::*;
+
+    let show = get_shows(conn,show_name)?;
+    let all_seasons = seasons.filter(tv_shows_id.eq(show.id))
+                                                        .filter(season_number.eq(number))
+                                                        .first::<Seasons>(conn);
+    match all_seasons {
+                Ok(found_seasons) => Ok(found_seasons),
+                Err(diesel::result::Error::NotFound) => {
+                                let error_message = format!("No season found with number: {}", number);
+                                // let custom_error = Response { message: error_message };
+                                let test: DbError = String::from(error_message).into();
+                                Err(test)
+                            }
+                Err(err) => Err(Box::new(err)),
+            }
+}
 
 // pub fn get_shows(conn: &mut PgConnection,name: &str) -> Result<TvShows,DbError> {
 //     use crate::schema::tv_shows::dsl::*;
