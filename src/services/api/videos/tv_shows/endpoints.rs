@@ -1,5 +1,5 @@
 use actix_web::{Responder,HttpResponse,web,Error,post,get,delete};
-use crate::services::db::models::videos::tv_shows::models::{ CreateShow};
+use crate::services::db::models::videos::tv_shows::models::CreateShow;
 use crate::DbPool;
 use crate::services::api::videos::tv_shows::functions::{create_show, get_all_shows,get_shows,delete_show};
 

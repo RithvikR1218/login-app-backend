@@ -1,4 +1,4 @@
-use diesel::{pg::PgConnection};
+use diesel::pg::PgConnection;
 use diesel::prelude::*;
 use crate::DbError;
 use crate::services::db::models::user::models::{NewUser,User, CreateUser, UpdateUser,Login,Response};

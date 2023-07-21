@@ -14,6 +14,9 @@ mod services {
                         pub mod models;
                     }
                 }
+                pub mod movies {
+                    pub mod models;
+                }
             }
         }
     } 
@@ -30,6 +33,10 @@ mod services {
                     pub mod functions;
                 }
             }
+            pub mod movies {
+                pub mod functions;
+                pub mod endpoints;
+            }
         }
     }
     pub mod routes {
@@ -43,7 +50,7 @@ use actix_cors::Cors;
 
 //logging
 use env_logger::Env;
-use crate::services::routes::routes::{user_controller,tv_show_controller};
+use crate::services::routes::routes::{user_controller,tv_show_controller,movie_controller};
 use crate::services::db::connection::db_connection::get_connection_pool;
 
 //Making a connection pool
@@ -81,6 +88,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(pool.clone()))
             //Controllers being used by server
             .service(user_controller())
+            .service(movie_controller())
             .service(tv_show_controller())
     })
     .bind("127.0.0.1:8080")?
