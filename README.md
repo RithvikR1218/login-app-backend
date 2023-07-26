@@ -22,5 +22,12 @@ Start Server:<br />
 Work to be done:
 - Have proper error handling on the actix side
 - Make JSON for error messages
-- finish the movies section
+- Change names to ID in routes=> Rip 
+- Add duration,rating => imdb?? for episodes
+- Add rating for seasons and shows too
+- Add seeded data for major data => movies and tv show data
+- Make RUD routes for episodes
+- Make route specifications using OpenAPI
+- Make D routes for season and rewrite tv_show for recursive delete
+- Make U routes for movie,tv_show,season,episode
 - Make some basic queries and mutations for videos and rating and start work on the web_transport

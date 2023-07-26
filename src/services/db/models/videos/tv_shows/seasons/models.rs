@@ -1,6 +1,6 @@
 use diesel::prelude::*;
 use serde::{Deserialize,Serialize};
-use crate::schema::{seasons};
+use crate::schema::seasons;
 use crate::services::db::models::videos::tv_shows::models::TvShows;
 
 #[derive(Queryable, Selectable, Identifiable, Associations, Debug, PartialEq,Serialize)]

@@ -13,6 +13,9 @@ mod services {
                     pub mod seasons {
                         pub mod models;
                     }
+                    pub mod episodes {
+                        pub mod models;
+                    }
                 }
                 pub mod movies {
                     pub mod models;
@@ -29,6 +32,10 @@ mod services {
                 pub mod endpoints;
                 pub mod functions;
                 pub mod seasons {
+                    pub mod episodes {
+                        pub mod endpoints;
+                        pub mod functions;
+                    }
                     pub mod endpoints;
                     pub mod functions;
                 }

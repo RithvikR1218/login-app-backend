@@ -3,7 +3,8 @@
 diesel::table! {
     episodes (id) {
         id -> Int4,
-        season_number -> Int4,
+        episode_name -> Varchar,
+        director -> Varchar,
         summary -> Text,
         seasons_id -> Int4,
     }

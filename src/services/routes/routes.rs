@@ -17,6 +17,8 @@ use crate::services::api::videos::movies::endpoints::{
 use crate::services::api::videos::tv_shows::seasons::endpoints::{
     create_new_season,get_all_present_seasons,get_some_seasons};
 
+use crate::services::api::videos::tv_shows::seasons::episodes::endpoints::create_new_episode;
+
 pub fn user_controller() -> actix_web::Scope{
     return actix_web::web::scope("/user") 
                                         .service(create_new_user)
@@ -47,5 +49,9 @@ pub fn tv_show_controller() -> actix_web::Scope{
                                                         .service(create_new_season)
                                                         .service(get_all_present_seasons)
                                                         .service(get_some_seasons)
+                                                        .service(
+                                                            actix_web::web::scope("/{number}/episode")
+                                                            .service(create_new_episode)
+                                                        )
                             );
 }

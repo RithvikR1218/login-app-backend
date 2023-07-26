@@ -1,5 +1,5 @@
 use actix_web::{Responder,HttpResponse,web,Error,post,get};
-use crate::services::db::models::videos::tv_shows::seasons::models::{ CreateSeason};
+use crate::services::db::models::videos::tv_shows::seasons::models::CreateSeason;
 use crate::DbPool;
 use crate::services::api::videos::tv_shows::seasons::functions::{
     create_season, get_all_seasons,get_seasons};
