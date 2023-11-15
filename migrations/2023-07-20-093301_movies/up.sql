@@ -5,5 +5,7 @@ CREATE TABLE movies (
   director VARCHAR NOT NULL,
   rating FLOAT NOT NULL,
   summary TEXT NOT NULL,
-  duration FLOAT NOT NULL
+  duration FLOAT NOT NULL,
+  video_link VARCHAR NOT NULL,
+  picture_link VARCHAR NOT NULL
 );

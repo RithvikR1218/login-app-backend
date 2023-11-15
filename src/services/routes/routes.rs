@@ -49,6 +49,7 @@ pub fn tv_show_controller() -> actix_web::Scope{
                                                         .service(create_new_season)
                                                         .service(get_all_present_seasons)
                                                         .service(get_some_seasons)
+                                                        //episode controller
                                                         .service(
                                                             actix_web::web::scope("/{number}/episode")
                                                             .service(create_new_episode)

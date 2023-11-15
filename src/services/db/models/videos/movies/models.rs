@@ -15,7 +15,9 @@ pub struct Movies {
     pub director: String,
     pub rating: f64,
     pub summary: String,
-    pub duration: f64
+    pub duration: f64,
+    pub video_link: String,
+    pub picture_link: String
 }
 
 #[derive(Insertable)]
@@ -25,7 +27,9 @@ pub struct NewMovie<'a> {
     pub director: &'a str,
     pub rating: &'a f64,
     pub summary: &'a str,
-    pub duration: &'a f64
+    pub duration: &'a f64,
+    pub video_link: &'a str,
+    pub picture_link: &'a str,
 }
 
 #[derive(Deserialize)]
@@ -34,5 +38,7 @@ pub struct CreateMovie {
     pub director: String,
     pub rating: f64,
     pub summary: String,
-    pub duration: f64
+    pub duration: f64,
+    pub video_link: String,
+    pub picture_link: String
 }

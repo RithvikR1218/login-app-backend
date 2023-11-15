@@ -10,7 +10,9 @@ pub fn create_movie(conn: &mut PgConnection, info: &CreateMovie) -> Result<Movie
         director: & info.director,
         rating: &info.rating,
         summary: &info.summary,
-        duration: &info.duration
+        duration: &info.duration,
+        video_link: &info.video_link,
+        picture_link: &info.picture_link,
     };
     let create = diesel::insert_into(movies::table)
         .values(&new_movie)
