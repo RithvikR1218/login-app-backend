@@ -1,0 +1,46 @@
+version: "3"
+
+services:
+  login-app-backend:
+    env_file: .env
+    build: .
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: cargo watch -x run
+    volumes:
+      - ./:/app
+    expose:
+      - ${BACKEND_PORT}
+    ports:
+      - ${BACKEND_PORT}:${BACKEND_PORT}
+    depends_on:
+      - login-app-database
+    restart: always
+    networks:
+      - login-app-backend-services
+
+  login-app-database:
+    env_file: .env
+    image: postgres:14.12
+    environment:
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+    volumes:
+      - postgres-data-1:/var/lib/postgresql/data
+    expose:
+      - ${DATABASE_PORT}
+    ports:
+      - ${DATABASE_PORT}:5432
+    restart: always
+    networks:
+      - login-app-backend-services
+
+volumes:
+  postgres-data-1:
+    external: false
+
+networks:
+  login-app-backend-services:
+    external: false
+    name: login-app-backend-services 

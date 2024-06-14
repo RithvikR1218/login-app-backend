@@ -54,7 +54,6 @@ pub mod schema;
 
 use actix_web::{web,error,App,middleware, HttpResponse, HttpServer};
 use actix_cors::Cors;
-
 //logging
 use env_logger::Env;
 use crate::services::routes::routes::{user_controller,tv_show_controller,movie_controller};
@@ -77,6 +76,11 @@ async fn main() -> std::io::Result<()> {
     //To start logging
     env_logger::init_from_env(Env::default().default_filter_or("info"));
 
+    let port = std::env::var("BACKEND_PORT").unwrap_or_else(|_| "3000".to_string());
+    let addr = format!("0.0.0.0:{}", port);
+
+    println!("Server is starting on http://{}", addr);
+
     //Customizing json data
     HttpServer::new(move || {
         let json_config = web::JsonConfig::default()
@@ -98,7 +102,7 @@ async fn main() -> std::io::Result<()> {
             .service(movie_controller())
             .service(tv_show_controller())
     })
-    .bind("127.0.0.1:8080")?
+    .bind(addr)?
     .run()
     .await
 }
